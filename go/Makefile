@@ -6,7 +6,7 @@ check: audit lint arch test
 tools:
 	go install golang.org/x/vuln/cmd/govulncheck@latest
 	go install github.com/fe3dback/go-arch-lint@latest
-	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.6.1
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0
 
 audit:
 	govulncheck ./...
