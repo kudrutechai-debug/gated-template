@@ -1,3 +1,3 @@
 module github.com/kudrutechai-debug/gated-template/go
 
-go 1.25
+go 1.26

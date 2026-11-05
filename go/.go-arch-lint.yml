@@ -12,9 +12,9 @@ components:
     in: cmd/**
 
 deps:
-  # The point of the whole file: domain may depend on nothing.
-  domain:
-    mayDependOn: []
+  # The point of the whole file: domain may depend on nothing, which
+  # go-arch-lint expresses by leaving it out of deps entirely. An empty
+  # mayDependOn: [] is a config error, not a rule.
   adapter:
     mayDependOn:
       - domain
