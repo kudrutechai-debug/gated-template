@@ -1,0 +1,10 @@
+[importlinter]
+root_package = gated_template
+
+[importlinter:contract:layers]
+name = Layering is enforced, not advised
+type = layers
+layers =
+    gated_template.handler
+    gated_template.adapter
+    gated_template.domain

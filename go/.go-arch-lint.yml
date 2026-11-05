@@ -1,0 +1,29 @@
+version: 3
+workdir: .
+
+components:
+  domain:
+    in: internal/domain
+  adapter:
+    in: internal/adapter
+  handler:
+    in: internal/handler
+  cmd:
+    in: cmd/**
+
+deps:
+  # The point of the whole file: domain may depend on nothing.
+  domain:
+    mayDependOn: []
+  adapter:
+    mayDependOn:
+      - domain
+  handler:
+    mayDependOn:
+      - adapter
+      - domain
+  cmd:
+    mayDependOn:
+      - handler
+      - adapter
+      - domain

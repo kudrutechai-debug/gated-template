@@ -1,0 +1,101 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------- Go: the same four checks DIGIMIDI's gate runs ----------
+  go-audit:
+    name: go / audit
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: go } }
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with: { go-version-file: go/go.mod }
+      - run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - run: govulncheck ./...
+
+  go-lint:
+    name: go / lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with: { go-version-file: go/go.mod }
+      - uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.6.1
+          working-directory: go
+
+  go-arch:
+    name: go / arch
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: go } }
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with: { go-version-file: go/go.mod }
+      - run: go install github.com/fe3dback/go-arch-lint@latest
+      - run: go-arch-lint check
+
+  go-test:
+    name: go / test
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: go } }
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with: { go-version-file: go/go.mod }
+      - run: go test ./... -race -count=1
+
+  # ---------- Python: the same four ideas, Python tooling ----------
+  py-audit:
+    name: python / audit
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: python } }
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.12" }
+      - run: python -m pip install -e '.[dev]'
+      - run: python -m pip_audit --skip-editable --progress-spinner off
+
+  py-lint:
+    name: python / lint
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: python } }
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.12" }
+      - run: python -m pip install -e '.[dev]'
+      - run: python -m ruff check --output-format=github .
+      - run: python -m ruff format --check .
+
+  py-arch:
+    name: python / arch
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: python } }
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.12" }
+      - run: python -m pip install -e '.[dev]'
+      - run: lint-imports
+
+  py-test:
+    name: python / test
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: python } }
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: "3.12" }
+      - run: python -m pip install -e '.[dev]'
+      - run: python -m pytest -q
